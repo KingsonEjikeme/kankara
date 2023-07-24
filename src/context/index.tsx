@@ -1,19 +1,27 @@
 "use client"
-import { createContext } from "react";
+import { createContext, useState } from "react";
 
-type GlobalData = {
-    username: string
-}
-const initialValues:GlobalData = {
-    username: ""
-}
-export const GlobalContext = createContext(initialValues);
+type TGlobalState = {
+    children: React.ReactNode;
+    showNavModal: boolean;
+    setShowNavModal:(a:boolean) => void;
+};
+
+const initialState = {
+    showNavModal: false,
+    setShowNavModal: (a:boolean)=> {}
+};
+export const GlobalContext = createContext(initialState);
 
 
 
-export default function GlobalState({children}:{children:React.ReactNode}){
+export default function GlobalState({children}:TGlobalState){
+    const [showNavModal, setShowNavModal]= useState<boolean>(false);
     return(
-        <GlobalContext.Provider value={initialValues}>
+        <GlobalContext.Provider value={{
+            showNavModal,
+            setShowNavModal
+        }}>
             {children}
         </GlobalContext.Provider>
     )

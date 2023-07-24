@@ -1,8 +1,10 @@
 "use client"
 import { adminNavOptions, navOptions, styles } from '@/utils';
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useContext, useState } from 'react'
 import { FiMenu, FiX } from 'react-icons/fi'
 import NavButton from '../Button/NavButton';
+import { GlobalContext } from '@/context';
+import CommonModal from '../CommonModal';
 
 const isAdminView = false;
 const isAuthUser = true;
@@ -11,10 +13,10 @@ const user = {
 }
 
 
-function NavItems({ extraStyle }: { extraStyle: string }) {
+function NavItems({  isModalView=false }: {  isModalView: boolean }) {
     return (
-        <div className={`items-center justify-between w-full md:flex md:w-auto ${extraStyle}`} id='nav-items'>
-            <ul className='flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0 bg-white'>
+        <div className={`items-center justify-between w-full md:flex md:w-auto ${isModalView ? "":"hidden"}`} id='nav-items'>
+            <ul className='flex flex-col p-4 md:p-0 mt-4 font-medium rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0 bg-white'>
                 {
                     isAuthUser ? isAdminView ? adminNavOptions.map((item, index) => {
                         return (
@@ -34,6 +36,7 @@ function NavItems({ extraStyle }: { extraStyle: string }) {
 }
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState<boolean>(false);
+    const { showNavModal, setShowNavModal } = useContext(GlobalContext);
     return (
         <>
             <nav className='md:px-8 bg-white fixed w-full z-20 top-0 left-0 border-b border-gray-200'>
@@ -63,18 +66,28 @@ export default function Navbar() {
                         <button
                             type='button'
                             className='inline-flex md:hidden relative h-10 w-10'
-                            onClick={() => setMenuOpen(!menuOpen)}
+                            onClick={() => setShowNavModal(!showNavModal)}
                         >
                             <span className='sr-only'>Open main menu</span>
                             <FiX className={` absolute top-0 right-0 h-10 w-10 transition-all duration-100 ${menuOpen ? "opacity-100" : "opacity-0"}`} />
                             <FiMenu className={`absolute top-0 right-0 h-10 w-10 transition-all duration-100 ${!menuOpen ? "opacity-100" : "opacity-0"}`} />
                         </button>
                     </div>
-                    <NavItems extraStyle={`${menuOpen ? "block" : "hidden"}`} />
+                    <NavItems isModalView={false} />
 
                 </div>
 
             </nav>
+            {
+                <CommonModal
+                    show={showNavModal}
+                    modalTitle='Title'
+                    mainContent={<NavItems isModalView={showNavModal}/>}
+                    setShow={setShowNavModal}
+                    showButtons
+                    buttonComponent={<div>Hello</div>}
+                />
+            }
         </>
     )
 }
